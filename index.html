@@ -121,24 +121,14 @@
     }
     .pointer svg { width: 40px; height: 50px; }
 
-    /* Outer decorative ring */
+    /* Outer decorative ring - Updated for 20 slices (18 degrees each) */
     .wheel-ring {
       position: absolute;
       inset: -12px;
       border-radius: 50%;
-      background: conic-gradient(
-        var(--gold) 0deg 30deg,
-        var(--gold-dark) 30deg 60deg,
-        var(--gold) 60deg 90deg,
-        var(--gold-dark) 90deg 120deg,
-        var(--gold) 120deg 150deg,
-        var(--gold-dark) 150deg 180deg,
-        var(--gold) 180deg 210deg,
-        var(--gold-dark) 210deg 240deg,
-        var(--gold) 240deg 270deg,
-        var(--gold-dark) 270deg 300deg,
-        var(--gold) 300deg 330deg,
-        var(--gold-dark) 330deg 360deg
+      background: repeating-conic-gradient(
+        var(--gold) 0deg 18deg,
+        var(--gold-dark) 18deg 36deg
       );
       box-shadow:
         0 0 30px rgba(255,215,0,0.5),
@@ -273,21 +263,6 @@
       border-color: var(--mid-green);
     }
 
-    .close-btn {
-      margin-top: 1.5rem;
-      padding: 0.7rem 2.5rem;
-      font-family: 'Amatic SC', cursive;
-      font-size: 1.6rem;
-      background: var(--deep-green);
-      color: var(--gold);
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transition: transform 0.15s;
-    }
-    .close-btn:hover { transform: scale(1.05); }
-
     /* Already-spun message */
     .already-msg {
       display: none;
@@ -364,6 +339,7 @@
     <p>ঈদ মোবারক! 🌙<br>Happy Eid — enjoy your gift!</p>
     
     <div class="claim-form" id="claimForm">
+      <input type="text" id="playerName" placeholder="Your Name" required />
       <input type="text" id="bkashNumber" placeholder="Your bKash Number (e.g. 017...)" required />
       <textarea id="userMessage" rows="2" placeholder="Leave a message!"></textarea>
       
@@ -378,19 +354,28 @@
 
 <script>
 // ── Config ──────────────────────────────────────────────────────────────────
+// Now expanded to 20 segments!
 const SEGMENTS = [
   { label: "৳0.50", value: 0.50, color: "#c0392b" },
   { label: "৳1",    value: 1,    color: "#27ae60" },
   { label: "৳2",    value: 2,    color: "#2980b9" },
-  { label: "৳0.50", value: 0.50, color: "#8e44ad" },
-  { label: "৳5",    value: 5,    color: "#e67e22" },
-  { label: "৳1",    value: 1,    color: "#16a085" },
-  { label: "৳10",   value: 10,   color: "#d35400" },
-  { label: "৳2",    value: 2,    color: "#1abc9c" },
-  { label: "৳20",   value: 20,   color: "#c0392b" },
-  { label: "৳0.50", value: 0.50, color: "#2c3e50" },
   { label: "৳5",    value: 5,    color: "#8e44ad" },
-  { label: "৳1",    value: 1,    color: "#27ae60" },
+  { label: "৳10",   value: 10,   color: "#e67e22" },
+  { label: "৳0.50", value: 0.50, color: "#16a085" },
+  { label: "৳1",    value: 1,    color: "#d35400" },
+  { label: "৳2",    value: 2,    color: "#1abc9c" },
+  { label: "৳5",    value: 5,    color: "#c0392b" },
+  { label: "৳20",   value: 20,   color: "#2c3e50" },
+  { label: "৳0.50", value: 0.50, color: "#27ae60" },
+  { label: "৳1",    value: 1,    color: "#8e44ad" },
+  { label: "৳2",    value: 2,    color: "#2980b9" },
+  { label: "৳5",    value: 5,    color: "#e67e22" },
+  { label: "৳10",   value: 10,   color: "#16a085" },
+  { label: "৳0.50", value: 0.50, color: "#d35400" },
+  { label: "৳1",    value: 1,    color: "#1abc9c" },
+  { label: "৳2",    value: 2,    color: "#c0392b" },
+  { label: "৳5",    value: 5,    color: "#2c3e50" },
+  { label: "৳50",   value: 50,   color: "#8e44ad" }
 ];
 
 const NUM = SEGMENTS.length;
@@ -442,9 +427,10 @@ function drawWheel(rotation) {
     ctx.shadowColor = "rgba(0,0,0,0.6)";
     ctx.shadowBlur = 4;
 
-    const fontSize = Math.max(12, Math.min(20, size / 22));
+    // Slightly smaller font so it perfectly fits the new 20 slices
+    const fontSize = Math.max(10, Math.min(16, size / 26));
     ctx.font = `bold ${fontSize}px 'Hind Siliguri', sans-serif`;
-    ctx.fillText(seg.label, r - 12, fontSize / 3);
+    ctx.fillText(seg.label, r - 16, fontSize / 3);
     ctx.restore();
   }
 
@@ -473,7 +459,7 @@ function spin() {
 
   const winIndex = Math.floor(Math.random() * NUM);
   
-  // FIX: Wrapped in Math.floor() to ensure whole rotations!
+  // Mathematical fix ensuring the pointer aligns flawlessly every single time
   const extraSpins = Math.floor(5 + Math.random() * 3) * 2 * Math.PI;
 
   const segMid = winIndex * ARC + ARC / 2;
@@ -528,15 +514,16 @@ function showResult(result) {
 }
 
 document.getElementById("submitBtn").addEventListener("click", async () => {
+  const name = document.getElementById("playerName").value.trim();
   const bkash = document.getElementById("bkashNumber").value.trim();
   const msg = document.getElementById("userMessage").value.trim();
   const amount = document.getElementById("resultAmount").textContent;
   const statusText = document.getElementById("formStatus");
 
-  if (!bkash) {
+  if (!name || !bkash) {
     statusText.style.display = "block";
     statusText.style.color = "var(--red)";
-    statusText.textContent = "Please enter your bKash number!";
+    statusText.textContent = "Please enter your name and bKash number!";
     return;
   }
 
@@ -546,7 +533,6 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
   document.getElementById("submitBtn").disabled = true;
 
   try {
-    // ⚠️ REPLACE THIS URL WITH YOUR ENDPOINT FROM FORMSPREE ⚠️
     const endpointURL = "https://formspree.io/f/mkoqyznk";
 
     const response = await fetch(endpointURL, {
@@ -556,6 +542,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
         "Accept": "application/json"
       },
       body: JSON.stringify({
+        Name: name,
         Eidi_Amount: amount,
         bKash_Number: bkash,
         Message: msg || "No message provided."
