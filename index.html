@@ -121,14 +121,14 @@
     }
     .pointer svg { width: 40px; height: 50px; }
 
-    /* Outer decorative ring - Updated for 20 slices (18 degrees each) */
+    /* Outer decorative ring - 30 slices (12 degrees each) */
     .wheel-ring {
       position: absolute;
       inset: -12px;
       border-radius: 50%;
       background: repeating-conic-gradient(
-        var(--gold) 0deg 18deg,
-        var(--gold-dark) 18deg 36deg
+        var(--gold) 0deg 12deg,
+        var(--gold-dark) 12deg 24deg
       );
       box-shadow:
         0 0 30px rgba(255,215,0,0.5),
@@ -354,28 +354,38 @@
 
 <script>
 // ── Config ──────────────────────────────────────────────────────────────────
-// Now expanded to 20 segments!
+// 30 segments! High amounts (30, 40, 50) are very rare now.
 const SEGMENTS = [
-  { label: "৳0.50", value: 0.50, color: "#c0392b" },
-  { label: "৳1",    value: 1,    color: "#27ae60" },
-  { label: "৳2",    value: 2,    color: "#2980b9" },
-  { label: "৳5",    value: 5,    color: "#8e44ad" },
-  { label: "৳10",   value: 10,   color: "#e67e22" },
-  { label: "৳0.50", value: 0.50, color: "#16a085" },
-  { label: "৳1",    value: 1,    color: "#d35400" },
-  { label: "৳2",    value: 2,    color: "#1abc9c" },
-  { label: "৳5",    value: 5,    color: "#c0392b" },
-  { label: "৳20",   value: 20,   color: "#2c3e50" },
-  { label: "৳0.50", value: 0.50, color: "#27ae60" },
-  { label: "৳1",    value: 1,    color: "#8e44ad" },
-  { label: "৳2",    value: 2,    color: "#2980b9" },
-  { label: "৳5",    value: 5,    color: "#e67e22" },
-  { label: "৳10",   value: 10,   color: "#16a085" },
-  { label: "৳0.50", value: 0.50, color: "#d35400" },
+  { label: "৳1",    value: 1,    color: "#c0392b" },
+  { label: "৳5",    value: 5,    color: "#27ae60" },
+  { label: "৳10",   value: 10,   color: "#2980b9" },
+  { label: "৳2",    value: 2,    color: "#8e44ad" },
+  { label: "৳1",    value: 1,    color: "#e67e22" },
+  { label: "৳15",   value: 15,   color: "#16a085" },
+  { label: "৳5",    value: 5,    color: "#d35400" },
   { label: "৳1",    value: 1,    color: "#1abc9c" },
   { label: "৳2",    value: 2,    color: "#c0392b" },
-  { label: "৳5",    value: 5,    color: "#2c3e50" },
-  { label: "৳50",   value: 50,   color: "#8e44ad" }
+  { label: "৳20",   value: 20,   color: "#2c3e50" },
+  { label: "৳1",    value: 1,    color: "#27ae60" },
+  { label: "৳5",    value: 5,    color: "#8e44ad" },
+  { label: "৳10",   value: 10,   color: "#2980b9" },
+  { label: "৳2",    value: 2,    color: "#e67e22" },
+  { label: "৳1",    value: 1,    color: "#16a085" },
+  { label: "৳30",   value: 30,   color: "#d35400" }, /* RARE */
+  { label: "৳5",    value: 5,    color: "#1abc9c" },
+  { label: "৳2",    value: 2,    color: "#c0392b" },
+  { label: "৳10",   value: 10,   color: "#2c3e50" },
+  { label: "৳1",    value: 1,    color: "#8e44ad" },
+  { label: "৳5",    value: 5,    color: "#27ae60" },
+  { label: "৳15",   value: 15,   color: "#2980b9" },
+  { label: "৳2",    value: 2,    color: "#e67e22" },
+  { label: "৳1",    value: 1,    color: "#16a085" },
+  { label: "৳40",   value: 40,   color: "#d35400" }, /* RARE */
+  { label: "৳5",    value: 5,    color: "#1abc9c" },
+  { label: "৳20",   value: 20,   color: "#c0392b" },
+  { label: "৳2",    value: 2,    color: "#2c3e50" },
+  { label: "৳10",   value: 10,   color: "#27ae60" },
+  { label: "৳50",   value: 50,   color: "#8e44ad" }  /* RARE */
 ];
 
 const NUM = SEGMENTS.length;
@@ -427,10 +437,10 @@ function drawWheel(rotation) {
     ctx.shadowColor = "rgba(0,0,0,0.6)";
     ctx.shadowBlur = 4;
 
-    // Slightly smaller font so it perfectly fits the new 20 slices
-    const fontSize = Math.max(10, Math.min(16, size / 26));
+    // Further adjusted font size for 30 thin slices
+    const fontSize = Math.max(9, Math.min(14, size / 32));
     ctx.font = `bold ${fontSize}px 'Hind Siliguri', sans-serif`;
-    ctx.fillText(seg.label, r - 16, fontSize / 3);
+    ctx.fillText(seg.label, r - 18, fontSize / 3);
     ctx.restore();
   }
 
@@ -459,7 +469,6 @@ function spin() {
 
   const winIndex = Math.floor(Math.random() * NUM);
   
-  // Mathematical fix ensuring the pointer aligns flawlessly every single time
   const extraSpins = Math.floor(5 + Math.random() * 3) * 2 * Math.PI;
 
   const segMid = winIndex * ARC + ARC / 2;
