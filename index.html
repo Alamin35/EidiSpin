@@ -371,7 +371,7 @@ const SEGMENTS = [
   { label: "৳10",   value: 10,   color: "#2980b9" },
   { label: "৳2",    value: 2,    color: "#e67e22" },
   { label: "৳1",    value: 1,    color: "#16a085" },
-  { label: "৳30",   value: 30,   color: "#d35400" }, /* RARE */
+  { label: "৳30",   value: 30,   color: "#d35400" }, 
   { label: "৳5",    value: 5,    color: "#1abc9c" },
   { label: "৳2",    value: 2,    color: "#c0392b" },
   { label: "৳10",   value: 10,   color: "#2c3e50" },
@@ -380,12 +380,12 @@ const SEGMENTS = [
   { label: "৳15",   value: 15,   color: "#2980b9" },
   { label: "৳2",    value: 2,    color: "#e67e22" },
   { label: "৳1",    value: 1,    color: "#16a085" },
-  { label: "৳40",   value: 40,   color: "#d35400" }, /* RARE */
+  { label: "৳40",   value: 40,   color: "#d35400" },
   { label: "৳5",    value: 5,    color: "#1abc9c" },
   { label: "৳20",   value: 20,   color: "#c0392b" },
   { label: "৳2",    value: 2,    color: "#2c3e50" },
   { label: "৳10",   value: 10,   color: "#27ae60" },
-  { label: "৳50",   value: 50,   color: "#8e44ad" }  /* RARE */
+  { label: "৳50",   value: 50,   color: "#8e44ad" }  
 ];
 
 const NUM = SEGMENTS.length;
@@ -467,7 +467,18 @@ function spin() {
   spinning = true;
   document.getElementById("spinBtn").disabled = true;
 
-  const winIndex = Math.floor(Math.random() * NUM);
+  // --- NEW WEIGHTED LOGIC ---
+  let winIndex;
+  let rejectBigNumber;
+  
+  do {
+    winIndex = Math.floor(Math.random() * NUM);
+    const selectedValue = SEGMENTS[winIndex].value;
+    
+    // If the value is 30 or more, there is a 90% chance it throws it away and picks again
+    rejectBigNumber = selectedValue >= 30 && Math.random() < 0.90; 
+  } while (rejectBigNumber);
+  // --------------------------
   
   const extraSpins = Math.floor(5 + Math.random() * 3) * 2 * Math.PI;
 
